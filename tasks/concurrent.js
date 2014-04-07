@@ -30,9 +30,17 @@ module.exports = function (grunt) {
 
 		padStdio.stdout('    ');
 		async.eachLimit(tasks, options.limit, function (task, next) {
+
+			// allow spawning grunt with many tasks 
+			if (task instanceof Array){
+				var args = task.concat(grunt.option.flags());
+			}else{
+				var args = [task].concat(grunt.option.flags());
+			}
+
 			var cp = grunt.util.spawn({
 				grunt: true,
-				args: [task].concat(grunt.option.flags()),
+				args: args,
 				opts: spawnOptions
 			}, function (err, result, code) {
 				if (err || code > 0) {
